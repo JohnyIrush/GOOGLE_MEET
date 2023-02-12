@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create or Join Meeting</title>
+    <link href="public/Assets/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet" />
+    <link href="public/Assets/fontawesome-free-5.15.4-web/less/fontawesome.less" />
+    <link href="public/Assets/fontawesome-free-5.15.4-web/scss/fontawesome.scss" />
+    <link href="public/Assets/fontawesome-free-5.15.4-web/sprites/solid.svg" />
+
+
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="public/Assets/css/bootstrap.css">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="public/Assets/css/style.css">
+</head>
+
+<body>
+    <main class="container-fluid d-flex flex-column home-wrap">
+        <div class="g-top text-light">
+            <div class="top-remote-video-show-wrap d-flex">
+                <div id="meetingContainer" class="w-75 d-none">
+                    <div class="call-wrap" style="background-color: black;">
+                        <div class="video-wrap" id="divUsers" style="display: flex; flex-wrap: wrap;">
+                            <div id="me" class="userbox display-center flex-column">
+                                <h2 class="display-center" style="font-size: 14px;"></h2>
+                                <div class="display-center">
+                                    <video autoplay muted id="localVideoPlayer"></video>
+                                </div>
+                            </div>
+                            <div id="otherTemplate" class="user display-center flex-column" style="display: none;">
+                                <h2 class="display-center" style="font-size: 14px;">video</h2>
+                                <div class="display-center">
+                                    <video autoplay muted id=""></video>
+                                    <audio autoplay controls muted id="" style="display: none;"></audio>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="g-top-left bg-light text-secondary w-25 d-flex align-items-center justify-content-between pl-2 pr-2">
+                    <div class="top-left-participant-wrap pt-2 cursor-pointer">
+                        <div class="top-left-participant-icon">
+                            <span><i class="fas fa-users"></i></span>
+                        </div>
+                        <div class="top-left-participant-count"></div>
+                    </div>
+                    <div class="top-left-chat-wrap pt-2 cursor-pointer">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="top-left-time-wrap"></div>
+                </div>
+            </div>
+        </div>
+        <div class="g-bottom bg-light m-0 d-flex justify-content-between align-items-center">
+            <div class="bottom-left d-flex" style="height:10vh">
+                <div class="display-center cursor-pointer meeting-details-button">
+                    Meeting Details <i class="fas fa-caret-down"></i>
+                </div>
+            </div>
+            <div class="bottom-middle">
+                <div id="micMuteUnmute" class="mic-toggle-wrap action-icon-style display-center mr-2 cursor-pointer">
+                    <span><i class="fas fa-microphone-slash"></i></span>
+                </div>
+                <div class="end-call-wrap action-icon-style display-center mr-2 cursor-pointer">
+                    <span><i class="fas fa-phone-alt"></i></span>
+                </div>
+                <div class="video-toggle-wrap action-icon-style display-center cursor-pointer">
+                    <span><i class="fas fa-video-slash"></i></span>
+                </div>
+             </div>
+            <div class="bottom-right d-flex justify-content-center align-items-center mr-3" style="height: 10vh;">
+                <div class="present-now-wrap d-flex justify-content-center flex-column align-items-center mr-5 cursor-pointer">
+                    <span class="material-icons">present_to_all</span>
+                </div>
+                <div class="">Present Now</div>
+                <div class="option-wrap cursor-pointer display-center" style="height: 10vh; position: relative;">
+                <div class="option-icon">
+                    <span class="material-icons">more_vert</span>
+                </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+        integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="public/Assets/js/script.js"></script>
+</body>
+
+</html>

@@ -125,3 +125,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+public/Assets/fontawesome-free-5.15.4-web
