@@ -12,6 +12,8 @@
     <link href="public/Assets/fontawesome-free-5.15.4-web/sprites/solid.svg" />
 
 
+    <!-- socket.io(1:47:47) -->
+
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="public/Assets/css/bootstrap.css">
 
@@ -20,7 +22,7 @@
 </head>
 
 <body>
-    <main class="container-fluid d-flex flex-column home-wrap">
+    <main class="d-flex flex-column home-wrap">
         <div class="g-top text-light">
             <div class="top-remote-video-show-wrap d-flex">
                 <div id="meetingContainer" class="w-75 d-none">
@@ -48,7 +50,7 @@
                         <div class="top-left-participant-icon">
                             <span><i class="fas fa-users"></i></span>
                         </div>
-                        <div class="top-left-participant-count"></div>
+                        <div class="top-left-participant-count">3</div>
                     </div>
                     <div class="top-left-chat-wrap pt-2 cursor-pointer">
                         <i class="fas fa-comments"></i>
@@ -63,7 +65,8 @@
                     Meeting Details <i class="fas fa-caret-down"></i>
                 </div>
             </div>
-            <div class="bottom-middle">
+            <div class="bottom-middle d-flex justify-content-center align-items-center" style="height: 
+            10vh;">
                 <div id="micMuteUnmute" class="mic-toggle-wrap action-icon-style display-center mr-2 cursor-pointer">
                     <span><i class="fas fa-microphone-slash"></i></span>
                 </div>
@@ -73,24 +76,51 @@
                 <div class="video-toggle-wrap action-icon-style display-center cursor-pointer">
                     <span><i class="fas fa-video-slash"></i></span>
                 </div>
-             </div>
+            </div>
             <div class="bottom-right d-flex justify-content-center align-items-center mr-3" style="height: 10vh;">
-                <div class="present-now-wrap d-flex justify-content-center flex-column align-items-center mr-5 cursor-pointer">
+                <div
+                    class="present-now-wrap d-flex justify-content-center flex-column align-items-center mr-5 cursor-pointer">
                     <span class="material-icons">present_to_all</span>
+                    <div class="">Present Now</div>
                 </div>
-                <div class="">Present Now</div>
+
                 <div class="option-wrap cursor-pointer display-center" style="height: 10vh; position: relative;">
-                <div class="option-icon">
-                    <span class="material-icons">more_vert</span>
-                </div>
+                    <div class="option-icon">
+                        <span class="material-icons">more_vert</span>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
-        integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-    <script src="public/Assets/js/script.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+        integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script> -->
+
+    <script language="JavaScript" type="text/javascript" src="public/Assets/js/jquery-3.6.3.min.js"></script>
+
+    <script language="JavaScript" type="text/javascript" src="public/Assets/js/script.js"></script>
+
+    <script src="public/Assets/js/socket.io.min.js" language="JavaScript" type="text/javascript"></script>
+
+    <script language="JavaScript" type="text/javascript">
+
+        /*index page*/
+
+        $(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            var meetingid = urlParams.get('meetingID')
+            user_id = window.prompt('Enter your user id')
+
+            if (!user_id || !meetingid) {
+                alert('User id or meeting id missing')
+                window.location.href = '/action.html'
+                return;
+            }
+            $("#meetingContainer").show();
+
+            myApp._init(user_id, meetingid)
+        })
+    </script>
 </body>
 
 </html>
