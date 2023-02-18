@@ -23,9 +23,10 @@
 
 <body>
     <main class="d-flex flex-column home-wrap">
+        <!--Top Section -->
         <div class="g-top text-light">
             <div class="top-remote-video-show-wrap d-flex">
-                <div id="meetingContainer" class="w-75 d-none">
+                <div id="meetingContainer" class="w-75" style="display: none;">
                     <div class="call-wrap" style="background-color: black;">
                         <div class="video-wrap" id="divUsers" style="display: flex; flex-wrap: wrap;">
                             <div id="me" class="userbox display-center flex-column">
@@ -34,7 +35,7 @@
                                     <video autoplay muted id="localVideoPlayer"></video>
                                 </div>
                             </div>
-                            <div id="otherTemplate" class="user display-center flex-column" style="display: none;">
+                            <div id="otherTemplate" class="userbox display-center flex-column" style="display: none;">
                                 <h2 class="display-center" style="font-size: 14px;">video</h2>
                                 <div class="display-center">
                                     <video autoplay muted id=""></video>
@@ -59,6 +60,8 @@
                 </div>
             </div>
         </div>
+        <!--Top Section -->
+        <!--Bottom Section -->
         <div class="g-bottom bg-light m-0 d-flex justify-content-between align-items-center">
             <div class="bottom-left d-flex" style="height:10vh">
                 <div class="display-center cursor-pointer meeting-details-button">
@@ -73,24 +76,28 @@
                 <div class="end-call-wrap action-icon-style display-center mr-2 cursor-pointer">
                     <span><i class="fas fa-phone-alt"></i></span>
                 </div>
-                <div class="video-toggle-wrap action-icon-style display-center cursor-pointer">
+                <div class="video-toggle-wrap action-icon-style display-center cursor-pointer"
+                id="videoCamOnOff">
                     <span><i class="fas fa-video-slash"></i></span>
                 </div>
             </div>
             <div class="bottom-right d-flex justify-content-center align-items-center mr-3" style="height: 10vh;">
                 <div
-                    class="present-now-wrap d-flex justify-content-center flex-column align-items-center mr-5 cursor-pointer">
-                    <span class="material-icons">present_to_all</span>
+                    class="present-now-wrap d-flex justify-content-center
+                     flex-column align-items-center 
+                     mr-5 cursor-pointer" id="btnScreenShareOnOff">
+                    <span class=""><i class="fas fa-arrow-up"></i></span>
                     <div class="">Present Now</div>
                 </div>
 
                 <div class="option-wrap cursor-pointer display-center" style="height: 10vh; position: relative;">
                     <div class="option-icon">
-                        <span class="material-icons">more_vert</span>
+                        <span class=""><i class="fas fa-ellipsis-v"></i></span>
                     </div>
                 </div>
             </div>
         </div>
+        <!--Bottom Section -->
     </main>
 
     <!-- <script src="https://code.jquery.com/jquery-3.6.3.min.js"

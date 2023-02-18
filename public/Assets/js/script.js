@@ -25,13 +25,113 @@ var AppProcess = (function(){
     var peers_connection = [];
     var remote_vid_stream = [];
     var remote_aud_stream = [];
-
+    var local_div;
     var serverProcess;
-    function _init(SDP_function, my_connid) {
-        serverProcess = SDP_function;
-        my_connection_id = my_connid;
+    var audio;
+    var isAudioMute = true;
+    var rtp_aud_senders = true;
+    var video_states = {
+        None: 0,
+        Camera: 1,
+        ScreenShare: 2
     }
 
+    var video_st = video_states.None;
+    var videoCamTrack;
+
+    async function _init(SDP_function, my_connid) {
+        serverProcess = SDP_function;
+        my_connection_id = my_connid;
+        eventProcess();
+        local_div = document.getElementById("localVideoPlayer")
+    }
+    
+    function eventProcess() {
+        $("#micMuteUnmute").on("click", async function() {
+            if (audio) {
+                await loadAudio();
+            }
+
+            if (!audio) 
+            {
+                alert("Audio permission has not been granted");   
+                return; 
+            }
+
+            if (isAudioMute) {
+                audio.enabled = true;
+                $(this).html('<span><i class="fas fa-microphone"></i></span>')
+                updateMediaSenders(audio, rtp_aud_senders);
+            }
+            else
+            {
+                audio.enabled = false;
+                $(this).html('<span><i class="fas fa-microphone-slash"></i></span>')
+                removeMediaSenders(rtp_aud_senders);
+            }
+            isAudioMute = !isAudioMute;
+        })
+
+        $("#videoCamOnOff").on("click", async function() {
+            //alert("video toggle")
+            if (video_st ==   video_states.Camera) {
+                await videoProcess(video_states.None)
+                alert("video toggle camera off")
+            }else{
+                await videoProcess(video_states.Camera)
+                alert("video toggle camera")
+            }
+        })
+
+        $("#btnScreenShareOnOff").on("click", async function() {
+            if (video_st ==   video_states.ScreenShare) {
+                await videoProcess(video_states.None)
+            }else{
+                await videoProcess(video_states.ScreenShare)
+            }
+        })
+    }
+
+    async function videoProcess(newVideoState) {
+        try {
+          vstream = null;  
+          console.log("newVideoState", newVideoState, video_states.Camera)
+          if (newVideoState == video_states.Camera) {
+            vstream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    width: 1920,
+                    height: 1080
+                },
+                audio: false
+            })
+
+           // alert("set webcam")
+            //console.log("video tracks", vstream)
+          } else if(newVideoState == video_st.ScreenShare){
+            vstream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                    width: 1920,
+                    height: 1080
+                },
+                audio: false
+            })
+          }
+          console.log("video tracks", vstream.getVideoTracks())
+          if (vstream && vstream.getVideoTracks().length > 0) {
+            videoCamTrack = vstream.getAudioTracks()[0]
+            if (videoCamTrack)
+            {
+                local_div.srcObject =  new MediaStream([videoCamTrack])
+                //alert("video cam found")
+            }
+          }
+        } catch (error) {
+            console.log(error)
+            return;
+        }
+
+        video_st = newVideoState
+    }
     var iceConfiguration = {
         iceServers: [
            { urls: "stun:stun.l.google:19302"},
@@ -40,7 +140,7 @@ var AppProcess = (function(){
     }
 
     //set new connection
-    function setNewConnection(connId) {
+    function setConnection(connId) {
         /**
         * A WebRTC connection between the local computer and
         * a remote peer. It provides methods to connect to a 
@@ -107,21 +207,39 @@ var AppProcess = (function(){
         }), connId)
     }
 
-
+    //sdp process
     async function SDPProcess(message, from_connid) {
         message  = JSON.parse(message);
     
         if (message.answer)
         {
-            
+            await peers_connection[from_connid].setRemoteDescription(new  
+                RTCSessionDescription(message.answer))
         }
         else if (message.offer)
         {
             if (!peers_connection[from_connid]) {
                 await setConnection(from_connid);
             }
-            
+            await peers_connection[from_connid].setLocalDescription(new 
+                RTCSessionDescription(message.offer))
             var answer = await peers_connection[from_connid].createAnswer()
+            await peers_connection[from_connid].setLocalDescription(answer)
+            serverProcess(JSON.stringify({ // send to whom sent us an offer
+                answer: answer
+            }), from_connid)
+        }
+        else if(message.icecandidate)
+        {
+            if (!peers_connection[from_connid])
+            {
+                  await setConnection(from_connid)  
+            }
+            try {
+                await peers_connection[from_connid].addIceCandidate(message.icecandidate)
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
 
@@ -132,7 +250,7 @@ var AppProcess = (function(){
         init: async function(SDP_function, my_connid) {
             await _init(SDP_function, my_connid);
         },
-        processClientFunc: async function(SDP_function, my_connid) {
+        processClientFunc: async function(data, from_connid) {
             await  SDPProcess(data, from_connid);
         }
     }
@@ -149,6 +267,8 @@ var myApp = (function(){
     {
         user_id = uid;
         meetingid = mid;
+        $("#meetingContainer").show();
+        $("#me h2").text(user_id + "(Me)");
         event_process_for_signaling_server();
     }
 
@@ -182,10 +302,22 @@ var myApp = (function(){
             }
         })
 
-        // listen for other users connection
+        // inform other users connection
         socket.on("inform_others_about_me", function(data) {
             addUser(data.other_user_id, data.connId) // add new user to the conference
             AppProcess.setNewConnection(data.connId) // set webrtc connection
+        })
+
+        // listen for other users connection
+        socket.on("inform_me_about_other_user", function(other_users) {
+
+            if (other_users) {
+               for (let i = 0; i < other_users.length; i++) {
+                //const element = other_users[i];
+                addUser(other_users[i].user_id, other_users[i].connectionId) // add new user to the conference
+                AppProcess.setNewConnection(other_users[i].connectionId) // set webrtc connection
+               } 
+            }
         })
         socket.on("SDPProcess", async function(data) {
             await AppProcess.processClientFunc(data.message, data.from.connid)
@@ -202,7 +334,7 @@ var myApp = (function(){
         newDivId.find("video").attr("id", "v_" + connId)
         newDivId.find("audio").attr("id", "a_" + connId)
         newDivId.show()
-
+        alert("add User")
         $("#divUsers").append(newDivId)
     }
     
